@@ -20,7 +20,7 @@ public final class NewVersionController: ObservableObject {
     @Published public private(set) var versionHistory: VersionHistory?
     
     @MainActor
-    @Published var unseenVersionsCount = 0
+    @Published public private(set) var unseenVersionsCount = 0
                 
     private let appStoreId: String
     private let currentAppVersion: String
