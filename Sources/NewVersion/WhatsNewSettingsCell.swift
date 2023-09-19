@@ -9,6 +9,10 @@ public struct WhatsNewSettingsCell: View {
     
     public let currentVersionViewed: (() -> (Void))?
     
+    public init(currentVersionViewed: (() -> Void)?) {
+        self.currentVersionViewed = currentVersionViewed
+    }
+    
     public var body: some View {
         NavigationLink {
             NewVersionView(currentVersionViewed: currentVersionViewed)

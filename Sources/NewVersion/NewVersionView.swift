@@ -12,6 +12,10 @@ public struct NewVersionView: View {
     
     @EnvironmentObject var newVersionController: NewVersionController
     
+    public init(currentVersionViewed: (() -> Void)?) {
+        self.currentVersionViewed = currentVersionViewed
+    }
+    
     public var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 20) {
