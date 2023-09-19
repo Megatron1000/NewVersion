@@ -8,7 +8,7 @@ import OSLog
 @available(iOS 15.0, *)
 public struct NewVersionView: View {
     
-    let currentVersionViewed: (() -> (Void))?
+    public let currentVersionViewed: (() -> (Void))?
     
     @EnvironmentObject var newVersionController: NewVersionController
     

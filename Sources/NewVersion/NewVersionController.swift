@@ -17,7 +17,7 @@ public final class NewVersionController: ObservableObject {
     private let versionHistoryService: VersionHistoryService
     
     @MainActor
-    @Published private(set) var versionHistory: VersionHistory?
+    @Published public private(set) var versionHistory: VersionHistory?
     
     @MainActor
     @Published var unseenVersionsCount = 0

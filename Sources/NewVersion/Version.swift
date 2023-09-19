@@ -2,8 +2,8 @@
 
 import Foundation
 
-struct Version: Codable, Identifiable {
-    var id: String {
+public struct Version: Codable, Identifiable {
+    public var id: String {
         versionString
     }
     let releaseDate: Date

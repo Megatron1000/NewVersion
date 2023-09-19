@@ -3,9 +3,9 @@
 import Foundation
 import OSLog
 
-struct VersionHistory {
+public struct VersionHistory {
     
-    let versions: [Version]
+    public let versions: [Version]
     
     var currentVersion: Version? {
         return versions.first
