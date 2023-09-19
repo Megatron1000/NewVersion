@@ -2,6 +2,7 @@
 
 import Foundation
 import OSLog
+import SwiftUI
 
 public final class NewVersionController: ObservableObject {
     
@@ -57,13 +58,17 @@ public final class NewVersionController: ObservableObject {
         // If we've got nothing in here and it's not the first launch this must
         // be the first time the app's launched with NewVersion integrated. So assume there's one unseen version
         guard let lastSeenVersion = seenVersionsStore.mostRecentSeenVersion else {
-            unseenVersionsCount = 1
+            withAnimation {
+                self.unseenVersionsCount = 1
+            }
             return
         }
         
         let unseenVersionsCount = versionHistory.versionsCount(from: lastSeenVersion, to: currentAppVersion)
         
-        self.unseenVersionsCount = unseenVersionsCount
+        withAnimation {
+            self.unseenVersionsCount = unseenVersionsCount
+        }
     }
     
     func isNew(version: Version) -> Bool {

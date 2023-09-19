@@ -31,8 +31,10 @@ public struct NewVersionView: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .background(Color(.systemBackground).edgesIgnoringSafeArea(.all))
         .onDisappear() {
-            newVersionController.recordVersionShown()
             currentVersionViewed?()
+            withAnimation {
+                newVersionController.recordVersionShown()
+            }
         }
     }
 }
