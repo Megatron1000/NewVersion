@@ -5,15 +5,6 @@ import OSLog
 
 public final class NewVersionController: ObservableObject {
     
-    enum VersionState {
-        /// It's a newer version but it's not been installed yet.
-        case notInstalled
-        /// User's seen this version
-        case seen
-        /// User's not seen this one yet
-        case notSeen
-    }
-    
     private let versionHistoryService: VersionHistoryService
     
     @MainActor

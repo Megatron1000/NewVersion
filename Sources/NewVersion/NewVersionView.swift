@@ -68,8 +68,10 @@ private struct VersionView: View {
                                                    time: .omitted))
                 .foregroundColor(Color(UIColor.secondaryLabel))
             }
-            Text(version.releaseNotes)
-                .font(.callout)
+            if let releaseNotes = version.releaseNotes {
+                Text(releaseNotes)
+                    .font(.callout)
+            }
         }
     }
 }

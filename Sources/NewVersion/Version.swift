@@ -7,6 +7,6 @@ public struct Version: Codable, Identifiable {
         versionString
     }
     let releaseDate: Date
-    let releaseNotes: String
+    let releaseNotes: String?
     let versionString: String
 }
