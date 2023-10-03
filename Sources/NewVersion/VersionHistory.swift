@@ -58,7 +58,7 @@ extension VersionHistory {
                                                                         releaseNotes: "It's not so new", 
                                                                         versionString: "1.1.1"),
                                                                 Version(releaseDate: Date().addingTimeInterval(-1),
-                                                                        releaseNotes: "It's old",
+                                                                        releaseNotes: "It's old. This one I'm making longer so it wraps. You see I need to know if that works.",
                                                                         versionString: "1.1"),
                                                                 Version(releaseDate: Date().addingTimeInterval(-1),
                                                                         releaseNotes: "First release",

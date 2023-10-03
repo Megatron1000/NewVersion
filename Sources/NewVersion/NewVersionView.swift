@@ -27,7 +27,7 @@ public struct NewVersionView: View {
             }
             .padding()
         }
-        .navigationBarTitle("What's New")
+        .navigationTitle(Text("What's New", bundle: .module))
         .navigationViewStyle(StackNavigationViewStyle())
         .background(Color(.systemBackground).edgesIgnoringSafeArea(.all))
         .onDisappear() {
@@ -53,7 +53,7 @@ private struct VersionView: View {
                 Text(version.versionString)
                     .font(.headline)
                 if (newVersionController.isNew(version: version)) {
-                    Text("NEW")
+                    Text("NEW", bundle: .module)
                         .font(.caption)
                         .bold()
                         .padding(EdgeInsets(top: 2,
@@ -73,7 +73,9 @@ private struct VersionView: View {
             if let releaseNotes = version.releaseNotes {
                 Text(releaseNotes)
                     .font(.callout)
+                    .padding([.bottom])
             }
+            Divider()
         }
     }
 }
@@ -95,6 +97,10 @@ struct NewVersionView_Previews: PreviewProvider {
             NavigationView {
                 NewVersionView() {}
             }
+            NavigationView {
+                NewVersionView() {}
+            }
+            .environment(\.locale, Locale(identifier: "fr"))
         }
         .environmentObject(newVersionController)
     }

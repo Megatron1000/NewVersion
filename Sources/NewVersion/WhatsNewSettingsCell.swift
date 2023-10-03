@@ -18,7 +18,7 @@ public struct WhatsNewSettingsCell: View {
             NewVersionView(currentVersionViewed: currentVersionViewed)
         } label: {
             HStack {
-                Text("What's New")
+                Text("What's New", bundle: .module)
                 Spacer()
                 BadgeView()
             }
