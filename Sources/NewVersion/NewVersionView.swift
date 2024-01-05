@@ -29,7 +29,9 @@ public struct NewVersionView: View {
         }
         .navigationTitle(Text("What's New", bundle: .module))
         .navigationViewStyle(StackNavigationViewStyle())
+        #if !os(tvOS)
         .background(Color(.systemBackground).edgesIgnoringSafeArea(.all))
+        #endif
         .onDisappear() {
             currentVersionViewed?()
             withAnimation {
