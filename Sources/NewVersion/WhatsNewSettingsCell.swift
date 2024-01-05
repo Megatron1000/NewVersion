@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, tvOS 15.0, *)
 public struct WhatsNewSettingsCell: View {
         
     @EnvironmentObject var newVersionController: NewVersionController
@@ -27,7 +27,7 @@ public struct WhatsNewSettingsCell: View {
 }
 
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, tvOS 15.0, *)
 struct WhatsNewSettingsCell_Previews: PreviewProvider {
         
     static let newVersionController: NewVersionController = {

@@ -5,7 +5,7 @@ import SwiftUI
 import Combine
 import OSLog
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, tvOS 15.0, *)
 public struct NewVersionView: View {
     
     public let currentVersionViewed: (() -> (Void))?
@@ -42,7 +42,7 @@ public struct NewVersionView: View {
 }
 
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, tvOS 15.0, *)
 private struct VersionView: View {
     
     @EnvironmentObject var newVersionController: NewVersionController
@@ -83,7 +83,7 @@ private struct VersionView: View {
 }
 
 
-@available(iOS 15.0, *)
+@available(iOS 15.0, tvOS 15.0, *)
 struct NewVersionView_Previews: PreviewProvider {
         
     static let newVersionController: NewVersionController = {
