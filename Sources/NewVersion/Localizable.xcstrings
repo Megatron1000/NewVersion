@@ -21,6 +21,18 @@
             "value" : "%lld"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -79,6 +91,18 @@
             "value" : "NUEVA"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOVO"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NUOVO"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -135,6 +159,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Novedades"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novidades"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novità"
           }
         },
         "fr" : {
