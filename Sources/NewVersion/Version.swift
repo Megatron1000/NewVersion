@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Version: Codable, Identifiable {
+public struct Version: Codable, Identifiable, Sendable {
     public var id: String {
         versionString
     }

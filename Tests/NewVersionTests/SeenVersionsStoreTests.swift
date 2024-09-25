@@ -3,36 +3,43 @@
 //
 
 import XCTest
+import UserDefaultsActor
 @testable import NewVersion
 
 final class SeenVersionsStoreTests: XCTestCase {
     
-    var userDefaults: UserDefaults!
+    var userDefaults: UserDefaultsActor!
     
     override func setUp() {
-        userDefaults = UserDefaults(suiteName: #file)
+        userDefaults = UserDefaultsActor(suite: .custom(UUID().uuidString))
     }
     
-    func testMostRecentVersionReturnsTheMostRecentVersion() {
+    override func tearDown() async throws {
+        await userDefaults.removePersistentDomain(forName: #file)
+    }
+    
+    func testMostRecentVersionReturnsTheMostRecentVersion() async {
         let seenVersionsStore = SeenVersionsStore(defaults: userDefaults)
-        seenVersionsStore.insert(version: "1.0")
-        seenVersionsStore.insert(version: "1.1")
-        seenVersionsStore.insert(version: "1.1.1")
+        await seenVersionsStore.insert(version: "1.0")
+        await seenVersionsStore.insert(version: "1.1")
+        await seenVersionsStore.insert(version: "1.1.1")
 
-        XCTAssertEqual(seenVersionsStore.mostRecentSeenVersion, "1.1.1")
+        let mostRecentVersion = await seenVersionsStore.mostRecentSeenVersion()
+        
+        XCTAssertEqual(mostRecentVersion, "1.1.1")
     }
     
-    func testMostRecentVersionReturnsTheMostRecentVersionIfAddedInDifferentOrder() {
+    func testMostRecentVersionReturnsTheMostRecentVersionIfAddedInDifferentOrder() async {
         let seenVersionsStore = SeenVersionsStore(defaults: userDefaults)
-        seenVersionsStore.insert(version: "1.1.1")
-        seenVersionsStore.insert(version: "1.1")
-        seenVersionsStore.insert(version: "1.0")
+        await seenVersionsStore.insert(version: "1.1.1")
+        await seenVersionsStore.insert(version: "1.1")
+        await seenVersionsStore.insert(version: "1.0")
+        
+        let mostRecentVersion = await seenVersionsStore.mostRecentSeenVersion()
 
-        XCTAssertEqual(seenVersionsStore.mostRecentSeenVersion, "1.1.1")
+        XCTAssertEqual(mostRecentVersion, "1.1.1")
     }
     
-    override func tearDown() {
-        userDefaults.removePersistentDomain(forName: #file)
-    }
+
 }
 

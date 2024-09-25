@@ -2,8 +2,9 @@
 
 import Foundation
 import OSLog
+import UserDefaultsActor
 
-final class VersionHistoryService {
+actor VersionHistoryService {
     
     private struct Response: Decodable {
         let versionHistory: [Version]
@@ -12,16 +13,16 @@ final class VersionHistoryService {
     private let session = URLSession.shared
     private let cachedVersionsStore: CachedVersionsStore
     
-    init(defaults: UserDefaults = .standard) {
-        self.cachedVersionsStore = .init(defaults: defaults)
+    init(defaults: UserDefaultsActor = UserDefaultsActor(suite: .standard)) {
+        self.cachedVersionsStore = CachedVersionsStore(defaults: defaults)
     }
     
-    func getVersionHistory(for appID: String, currentVersion: String?) async throws -> VersionHistory {
+    func getVersions(for appID: String, currentVersion: String?) async throws -> [Version] {
         
         if let currentVersion,
-           cachedVersionsStore.contains(version: currentVersion) {
+           await cachedVersionsStore.contains(version: currentVersion) {
             Logger.standard.debug("Using cached version history as it already contains the current version")
-            return VersionHistory(versions: cachedVersionsStore.cachedVersions)
+            return await cachedVersionsStore.cachedVersions
         }
         
         guard let endpoint: URL = URL(string: "https://apps.apple.com/app/id\(appID)") else {
@@ -45,9 +46,9 @@ final class VersionHistoryService {
         
         Logger.standard.debug("Received version history info: \(String(describing: versionHistoryResponse))")
                 
-        cachedVersionsStore.cachedVersions = versionHistoryResponse.versionHistory
+        try await cachedVersionsStore.updateCachedVersions(with: versionHistoryResponse.versionHistory)
         
-        return VersionHistory(versions: versionHistoryResponse.versionHistory)
+        return versionHistoryResponse.versionHistory
     }
     
 }

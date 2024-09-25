@@ -4,6 +4,7 @@
 import SwiftUI
 import Combine
 import OSLog
+import UserDefaultsActor
 
 @available(iOS 15.0, tvOS 15.0, *)
 public struct NewVersionView: View {
@@ -34,8 +35,8 @@ public struct NewVersionView: View {
         #endif
         .onDisappear() {
             currentVersionViewed?()
-            withAnimation {
-                newVersionController.recordVersionShown()
+            Task {
+                await newVersionController.recordVersionShown()
             }
         }
     }
@@ -54,7 +55,7 @@ private struct VersionView: View {
             HStack {
                 Text(version.versionString)
                     .font(.headline)
-                if (newVersionController.isNew(version: version)) {
+                if (newVersionController.versionHistory?.isNew(version: version) ?? false) {
                     Text("NEW", bundle: .module)
                         .font(.caption)
                         .bold()
@@ -87,10 +88,16 @@ private struct VersionView: View {
 struct NewVersionView_Previews: PreviewProvider {
         
     static let newVersionController: NewVersionController = {
-        let versionHistoryController = NewVersionController(appStoreId: "Your ID",
-                                                            currentAppVersion: "1.1",
-                                                            isFirstLaunch: false)
-        versionHistoryController.handle(versionHistory: VersionHistory.stub)
+        let versionHistoryController = NewVersionController()
+        Task {
+            let config = Config(
+                appStoreId: "com.bridgetech.Jigsaw",
+                currentAppVersion: "1.3",
+                isFirstLaunch: false,
+                defaults: UserDefaultsActor(suite: .custom(UUID().uuidString)))
+                                
+            await versionHistoryController.configure(with: config)
+        }
         return versionHistoryController
     }()
         

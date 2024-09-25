@@ -3,92 +3,52 @@
 import Foundation
 import OSLog
 import SwiftUI
+import UserDefaultsActor
 
+@MainActor
 public final class NewVersionController: ObservableObject {
-    
-    private let versionHistoryService: VersionHistoryService
-    
-    @MainActor
+            
     @Published public private(set) var versionHistory: VersionHistory?
-    
-    @MainActor
     @Published public private(set) var unseenVersionsCount = 0
-                
-    private let appStoreId: String
-    private let currentAppVersion: String
-    private let isFirstLaunch: Bool
-    let seenVersionsStore: SeenVersionsStore
     
-    public init(appStoreId: String,
-                currentAppVersion: String,
-                isFirstLaunch: Bool,
-                defaults: UserDefaults = .standard) {
-        self.appStoreId = appStoreId
-        self.currentAppVersion = currentAppVersion
-        self.isFirstLaunch = isFirstLaunch
-        self.seenVersionsStore = .init(defaults: defaults)
-        self.versionHistoryService = .init(defaults: defaults)
-        
-        // It's the first launch so there's nothing new
-        if isFirstLaunch {
-            self.seenVersionsStore.insert(version: currentAppVersion)
-        }
-    }
-    
-    public func refresh() async {
-        do {
-            let versionHistory = try await versionHistoryService.getVersionHistory(for: appStoreId,
-                                                               currentVersion: currentAppVersion)
-            await handle(versionHistory: versionHistory)
-        }
-        catch {
-            Logger.standard.error("Failed to get version history: \(String(describing: error))")
-        }
-    }
-    
-    @MainActor
-    func handle(versionHistory: VersionHistory) {
-        self.versionHistory = versionHistory
-        
-        if isFirstLaunch {
-            unseenVersionsCount = 0
-            return
-        }
+    static let shared: NewVersionController = .init()
 
-        // If we've got nothing in here and it's not the first launch this must
-        // be the first time the app's launched with NewVersion integrated. So assume there's one unseen version
-        guard let lastSeenVersion = seenVersionsStore.mostRecentSeenVersion else {
-            withAnimation {
-                self.unseenVersionsCount = 1
-            }
+    private var newVersionManager: NewVersionManager?
+    
+    init() {
+        
+    }
+    
+    func configure(with config: Config) async {
+        guard newVersionManager == nil else {
+            assertionFailure("Already configured")
             return
         }
+        newVersionManager = await NewVersionManager(config: config, delegate: self)
+        await newVersionManager?.refresh()
+    }
+    
+    
+    func recordVersionShown() async {
+        guard let newVersionManager else {
+            assertionFailure("New version manager not configured")
+            return
+        }
+        await newVersionManager.recordVersionShown()
+    }
         
-        let unseenVersionsCount = versionHistory.versionsCount(from: lastSeenVersion, to: currentAppVersion)
-        
+}
+
+extension NewVersionController: NewVersionManagerDelegate {
+    
+    func versionHistoryChanged(_ versionHistory: VersionHistory?) {
+        self.versionHistory = versionHistory
+    }
+    
+    func unseenVersionsCountChanged(_ unseenVersionsCount: Int) {
         withAnimation {
             self.unseenVersionsCount = unseenVersionsCount
         }
-    }
-    
-    func isNew(version: Version) -> Bool {
-        guard let lastSeenVersion = seenVersionsStore.mostRecentSeenVersion else {
-            return version.versionString == currentAppVersion
-        }
-        
-        switch version.versionString.compare(lastSeenVersion, options: .numeric) {
-        case .orderedDescending:
-            return true
-            
-        default:
-            return false
-        }
-    }
-    
-    @MainActor
-    func recordVersionShown() {
-        self.seenVersionsStore.insert(version: currentAppVersion)
-        self.unseenVersionsCount = 0
     }
     
 }

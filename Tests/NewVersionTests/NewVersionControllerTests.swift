@@ -1,119 +1,136 @@
 import XCTest
+import UserDefaultsActor
 @testable import NewVersion
 
 final class NewVersionControllerTests: XCTestCase {
     
-    var userDefaults: UserDefaults!
+    var userDefaults: UserDefaultsActor!
     
     override func setUp() {
-        userDefaults = UserDefaults(suiteName: #file)
+        super.setUp()
+        userDefaults = UserDefaultsActor(suite: .custom(UUID().uuidString))
     }
     
-    @MainActor
-    func testStartsWithUnseenVersionCount0() {
-        let sut = sut(currentAppVersion: "1.0",
+    override func tearDown() async throws {
+        await userDefaults.removePersistentDomain(forName: #file)
+        try await super.tearDown()
+    }
+    
+    func testStartsWithUnseenVersionCount0() async {
+        let sut = await sut(currentAppVersion: "1.0",
                                     isFirstLaunch: false)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 0)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        XCTAssertEqual(unseenVersionsCount, 0)
     }
     
-    @MainActor
-    func testTracksSeenVersionOnInitOnFirstLaunch() {
-        _ = sut(currentAppVersion: "2.0",
+    func testTracksSeenVersionOnInitOnFirstLaunch() async {
+        _ = await sut(currentAppVersion: "2.0",
                                     isFirstLaunch: true)
         
-        let sut2 = sut(currentAppVersion: "2.0",
+        let sut2 = await sut(currentAppVersion: "2.0",
                                     isFirstLaunch: false)
         
-        XCTAssertEqual(sut2.unseenVersionsCount, 0)
+        let unseenVersionsCount = await sut2.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 0)
     }
     
-    @MainActor
-    func testStartsWithUnseenVersionCount0OnFirstLaunch() {
-        let sut = sut(currentAppVersion: "1.2",
+    func testStartsWithUnseenVersionCount0OnFirstLaunch() async {
+        let sut = await sut(currentAppVersion: "1.2",
                                     isFirstLaunch: true)
-        sut.handle(versionHistory: .stub)
+        await sut.handle(versionHistory: .stub)
+        let unseenVersionsCount = await sut.unseenVersionsCount
         
-        XCTAssertEqual(sut.unseenVersionsCount, 0)
+        XCTAssertEqual(unseenVersionsCount, 0)
     }
     
-    @MainActor
-    func testUnseenVersionCount0OnFirstLaunchEvenIfCurrentVersionIsNotInList() {
-        let sut = sut(currentAppVersion: "1.3",
+    func testUnseenVersionCount0OnFirstLaunchEvenIfCurrentVersionIsNotInList() async {
+        let sut = await sut(currentAppVersion: "1.3",
                                     isFirstLaunch: true)
-        sut.handle(versionHistory: .stub)
+        await sut.handle(versionHistory: .stub)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 0)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 0)
     }
     
-    @MainActor
-    func testUnseenVersionCount0OnFirstLaunchEvenIfCurrentVersionIsLowerThanInList() {
-        let sut = sut(currentAppVersion: "1.1",
+    func testUnseenVersionCount0OnFirstLaunchEvenIfCurrentVersionIsLowerThanInList() async {
+        let sut = await sut(currentAppVersion: "1.1",
                                     isFirstLaunch: true)
-        sut.handle(versionHistory: .stub)
+        await sut.handle(versionHistory: .stub)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 0)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 0)
     }
     
-    @MainActor
-    func testUnseenVersionCount1IfTheresOneUnseenVersion() {
-        let sut = sut(currentAppVersion: "1.2",
+    func testUnseenVersionCount1IfTheresOneUnseenVersion() async  {
+        let sut = await sut(currentAppVersion: "1.2",
                                     isFirstLaunch: false)
-        sut.seenVersionsStore.insert(version: "1.1.1")
-        sut.handle(versionHistory: .stub)
+        await sut.seenVersionsStore.insert(version: "1.1.1")
+        await sut.handle(versionHistory: .stub)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 1)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 1)
     }
     
-    @MainActor
-    func testUnseenVersionCount2IfWeHaveNotSeenTwo() {
-        let sut = sut(currentAppVersion: "1.2",
+    func testUnseenVersionCount2IfWeHaveNotSeenTwo() async {
+        let sut = await sut(currentAppVersion: "1.2",
                                     isFirstLaunch: false)
-        sut.seenVersionsStore.insert(version: "1.1")
-        sut.handle(versionHistory: .stub)
+        await sut.seenVersionsStore.insert(version: "1.1")
+        await sut.handle(versionHistory: .stub)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 2)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 2)
     }
     
-    @MainActor
-    func testUnseenVersionCount0IfTheresOneUnseenVersionButWeHaventInstalledIt() {
-        let sut = sut(currentAppVersion: "1.1.1",
+    func testUnseenVersionCount0IfTheresOneUnseenVersionButWeHaventInstalledIt() async {
+        let sut = await sut(currentAppVersion: "1.1.1",
                                     isFirstLaunch: false)
-        sut.seenVersionsStore.insert(version: "1.1.1")
-        sut.handle(versionHistory: .stub)
+        await sut.seenVersionsStore.insert(version: "1.1.1")
+        await sut.handle(versionHistory: .stub)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 0)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 0)
     }
     
-    @MainActor
-    func testUnseenVersionCount1IfWeAreOnAVersionThatsNotInTheHistoryButThereAreStillVersionsWeHaveNotSeen() {
-        let sut = sut(currentAppVersion: "2.1",
+    func testUnseenVersionCount1IfWeAreOnAVersionThatsNotInTheHistoryButThereAreStillVersionsWeHaveNotSeen() async {
+        let sut = await sut(currentAppVersion: "2.1",
                                     isFirstLaunch: false)
-        sut.seenVersionsStore.insert(version: "1.1.1")
-        sut.handle(versionHistory: .stub)
+        await sut.seenVersionsStore.insert(version: "1.1.1")
+        await sut.handle(versionHistory: .stub)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 1)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 1)
     }
     
-    @MainActor
     // Because we assume this must be the first launch where we're tracking this
-    func testUnseenVersionCountContainAllIfWeHaveNotSeenAnythingAndItsNotTheFirstLaunch() {
-        let sut = sut(currentAppVersion: "2.0",
+    func testUnseenVersionCountContainAllIfWeHaveNotSeenAnythingAndItsNotTheFirstLaunch() async {
+        let sut = await sut(currentAppVersion: "2.0",
                                     isFirstLaunch: false)
-        sut.handle(versionHistory: .stub)
+        await sut.handle(versionHistory: .stub)
         
-        XCTAssertEqual(sut.unseenVersionsCount, 1)
+        let unseenVersionsCount = await sut.unseenVersionsCount
+        
+        XCTAssertEqual(unseenVersionsCount, 1)
     }
+    
+    // MARK: SUT
     
     private func sut(currentAppVersion: String,
-                     isFirstLaunch: Bool) -> NewVersionController {
-        return NewVersionController(appStoreId: "NOT_IMPORTANT",
-                                    currentAppVersion: currentAppVersion,
-                                    isFirstLaunch: isFirstLaunch,
-                                    defaults: userDefaults)
+                     isFirstLaunch: Bool) async -> NewVersionManager {
+        
+        let config = Config(appStoreId: "NOT_IMPORTANT",
+                            currentAppVersion: currentAppVersion,
+                            isFirstLaunch: isFirstLaunch,
+                            defaults: userDefaults)
+        
+        return await NewVersionManager(config: config, delegate: nil)
     }
     
-    override func tearDown() {
-        userDefaults.removePersistentDomain(forName: #file)
-    }
 }

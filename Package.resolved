@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "userdefaultsactor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Megatron1000/UserDefaultsActor.git",
+      "state" : {
+        "revision" : "ba2bd22c173be9e0c30cbc517c78b6891764f2a2",
+        "version" : "0.2.0"
+      }
+    }
+  ],
+  "version" : 2
+}

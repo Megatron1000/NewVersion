@@ -1,32 +1,34 @@
 //  Copyright © 2023 BridgeTech Solutions Limited. All rights reserved.
 
 import Foundation
+import UserDefaultsActor
 
-final class SeenVersionsStore {
+actor SeenVersionsStore {
     
-    private let defaults: UserDefaults
+    private let defaults: UserDefaultsActor
     private let seenVersionsKey = "update_shown_for_versions"
     
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaultsActor = UserDefaultsActor(suite: .standard)) {
         self.defaults = defaults
     }
     
     private var seenVersions: Set<String> {
-        get {
-            let arrayValue: [String] = defaults.value(forKey: seenVersionsKey) as? Array<String> ?? []
+        get async {
+            let arrayValue: [String] = await defaults.array(forKey: seenVersionsKey) as? Array<String> ?? []
             return Set(arrayValue)
         }
-        set {
-            defaults.set(Array(newValue), forKey: seenVersionsKey)
-        }
+
     }
     
-    var mostRecentSeenVersion: String? {
-        seenVersions.sorted { $0.compare($1, options: .numeric) == .orderedDescending }.first
+    func mostRecentSeenVersion() async -> String? {
+        await seenVersions.sorted { $0.compare($1, options: .numeric) == .orderedDescending }.first
     }
     
-    func insert(version: String) {
-        seenVersions.insert(version)
+    func insert(version: String) async {
+        var newSeenVersions = await seenVersions
+        newSeenVersions.insert(version)
+        await defaults.set(Array(newSeenVersions), forKey: seenVersionsKey)
+
     }
 
 }
