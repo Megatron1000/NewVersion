@@ -11,7 +11,7 @@ public final class NewVersionController: ObservableObject {
     @Published public private(set) var versionHistory: VersionHistory?
     @Published public private(set) var unseenVersionsCount = 0
     
-    static let shared: NewVersionController = .init()
+    public static let shared: NewVersionController = .init()
 
     private var newVersionManager: NewVersionManager?
     
@@ -19,7 +19,7 @@ public final class NewVersionController: ObservableObject {
         
     }
     
-    func configure(with config: Config) async {
+    public func configure(with config: Config) async {
         guard newVersionManager == nil else {
             assertionFailure("Already configured")
             return
@@ -29,7 +29,7 @@ public final class NewVersionController: ObservableObject {
     }
     
     
-    func recordVersionShown() async {
+    public func recordVersionShown() async {
         guard let newVersionManager else {
             assertionFailure("New version manager not configured")
             return
