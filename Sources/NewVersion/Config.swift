@@ -14,4 +14,16 @@ public struct Config: Sendable {
     let isFirstLaunch: Bool
     let defaults: UserDefaultsActor
     
+    public init(appStoreId: String,
+                currentAppVersion: String,
+                isFirstLaunch: Bool,
+                defaults: UserDefaultsActor =
+                UserDefaultsActor(suite: .standard)) {
+        self.appStoreId = appStoreId
+        self.currentAppVersion = currentAppVersion
+        self.isFirstLaunch = isFirstLaunch
+        self.defaults = defaults
+    }
+    
+    
 }
