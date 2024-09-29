@@ -41,6 +41,7 @@ actor NewVersionManager {
     
     init(config: Config, delegate: NewVersionManagerDelegate?) async {
         self.config = config
+        self.delegate = delegate
         self.seenVersionsStore = .init(defaults: config.defaults)
         self.versionHistoryService = .init(defaults: config.defaults)
         
