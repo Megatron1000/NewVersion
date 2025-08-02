@@ -4,16 +4,16 @@ import SwiftUI
 import UserDefaultsActor
 
 @available(iOS 15.0, tvOS 15.0, *)
-public struct WhatsNewSettingsCell: View {
+public struct WhatsNewSettingsCell<Content: View>: View {
         
     @EnvironmentObject var newVersionController: NewVersionController
     
-    public let image: Image?
+    public let image: Content?
     public let currentVersionViewed: (() -> (Void))?
     
-    public init(image: Image? = Image(systemName: "gift"),
+    public init(@ViewBuilder image: () -> Content = { Image(systemName: "gift") },
                 currentVersionViewed: (() -> Void)?) {
-        self.image = image
+        self.image = image()
         self.currentVersionViewed = currentVersionViewed
     }
     
