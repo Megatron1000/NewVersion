@@ -29,7 +29,7 @@ let package = Package(
             name: "NewVersionTests",
             dependencies: ["NewVersion"]),
     ],
-    swiftLanguageVersions: [.version("6")]
+    swiftLanguageVersions: [.version("6.1")]
 )
 
 

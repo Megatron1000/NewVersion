@@ -8,9 +8,12 @@ public struct WhatsNewSettingsCell: View {
         
     @EnvironmentObject var newVersionController: NewVersionController
     
+    public let image: Image?
     public let currentVersionViewed: (() -> (Void))?
     
-    public init(currentVersionViewed: (() -> Void)?) {
+    public init(image: Image? = Image(systemName: "gift"),
+                currentVersionViewed: (() -> Void)?) {
+        self.image = image
         self.currentVersionViewed = currentVersionViewed
     }
     
@@ -19,6 +22,9 @@ public struct WhatsNewSettingsCell: View {
             NewVersionView(currentVersionViewed: currentVersionViewed)
         } label: {
             HStack {
+                if let image {
+                    image
+                }
                 Text("What's New", bundle: .module)
                 Spacer()
                 BadgeView()
