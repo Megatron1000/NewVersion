@@ -18,15 +18,12 @@ public struct NewVersionView: View {
     }
     
     public var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 20) {
-                if let versions = newVersionController.versionHistory?.versions {
-                    ForEach(versions) { version in
-                        VersionView(version: version)
-                    }
+        Form {
+            if let versions = newVersionController.versionHistory?.versions {
+                ForEach(versions) { version in
+                    VersionView(version: version)
                 }
             }
-            .padding()
         }
         .navigationTitle(Text("What's New", bundle: .module))
         .navigationViewStyle(StackNavigationViewStyle())
@@ -71,14 +68,12 @@ private struct VersionView: View {
                 Spacer()
                 Text(version.releaseDate.formatted(date: .abbreviated,
                                                    time: .omitted))
-                .foregroundColor(Color(UIColor.secondaryLabel))
+                .foregroundColor(.secondary)
             }
             if let releaseNotes = version.releaseNotes {
-                Text(releaseNotes)
+                Text(releaseNotes.trimmingCharacters(in: .whitespacesAndNewlines))
                     .font(.callout)
-                    .padding([.bottom])
             }
-            Divider()
         }
     }
 }
@@ -91,7 +86,7 @@ struct NewVersionView_Previews: PreviewProvider {
         let versionHistoryController = NewVersionController()
         Task {
             let config = Config(
-                appStoreId: "com.bridgetech.Jigsaw",
+                appStoreId: "1459538265",
                 currentAppVersion: "1.3",
                 isFirstLaunch: false,
                 defaults: UserDefaultsActor(suite: .custom(UUID().uuidString)))
