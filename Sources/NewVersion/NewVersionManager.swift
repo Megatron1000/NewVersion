@@ -10,7 +10,7 @@ import OSLog
 import UserDefaultsActor
 
 @MainActor
-protocol NewVersionManagerDelegate: AnyObject {
+protocol NewVersionManagerDelegate: AnyObject, Sendable {
     func versionHistoryChanged(_ versionHistory: VersionHistory?) async
     func unseenVersionsCountChanged(_ unseenVersionsCount: Int) async
 }
