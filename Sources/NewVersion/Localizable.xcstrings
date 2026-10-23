@@ -68,6 +68,12 @@
             "state" : "translated",
             "value" : "%lld"
           }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
         }
       }
     },
@@ -138,6 +144,12 @@
             "state" : "translated",
             "value" : "新的"
           }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOU"
+          }
         }
       }
     },
@@ -207,6 +219,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新增功能"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noutăți"
           }
         }
       }
